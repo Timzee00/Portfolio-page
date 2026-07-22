@@ -8,7 +8,7 @@ export async function Testimonials() {
     <section className="mx-auto max-w-5xl px-6 py-32">
       <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted">Testimonials</p>
       <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">
-        From people I've worked with.
+        From people I&apos;ve worked with.
       </h2>
 
       <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
