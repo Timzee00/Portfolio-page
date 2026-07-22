@@ -43,7 +43,7 @@ export function MediaUpload({
     setError(null);
     setUploading(true);
 
-    const files = multiple ? Array.from(fileList) : [fileList[0]];
+    const files = multiple ? Array.from(fileList) : Array.from(fileList).slice(0, 1);
 
     try {
       const uploaded = await Promise.all(
