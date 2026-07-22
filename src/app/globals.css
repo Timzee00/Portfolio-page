@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Ink — dark mode canvas backdrop. Cool, near-black, not pure #000
+     so glows and grid textures have room to read against it. */
+  --background: 225 20% 6%;
+  --foreground: 40 15% 95%;
+  --surface: 225 16% 11%;
+  --muted: 225 8% 60%;
+
+  /* Two accents, not one — the design side and the dev side. Used one
+     at a time depending on context, never blended into a gradient. */
+  --accent-design: 328 90% 60%;   /* Ink Magenta */
+  --accent-dev: 168 84% 51%;      /* Circuit Cyan */
+  --accent: var(--accent-design); /* default accent for generic UI */
+}
+
+.light {
+  --background: 40 20% 97%;   /* Chalk — off-white, not pure white */
+  --foreground: 225 20% 8%;
+  --surface: 40 15% 92%;
+  --muted: 225 8% 40%;
+  --accent-design: 328 85% 48%;
+  --accent-dev: 168 70% 38%;
+  --accent: var(--accent-design);
+}
+
+* {
+  scrollbar-width: thin;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis takes over smooth scroll */
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid hsl(var(--accent-dev));
+  outline-offset: 2px;
+}
