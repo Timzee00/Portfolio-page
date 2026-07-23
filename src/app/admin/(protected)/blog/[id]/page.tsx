@@ -6,9 +6,9 @@ import { updateBlogPost } from "@/lib/actions/admin/blog";
 export default async function EditBlogPostPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
+  const { id } = params;
   const supabase = await createClient();
   const { data: post } = await supabase
     .from("blog_posts")

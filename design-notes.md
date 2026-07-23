@@ -115,3 +115,26 @@ guessing what's "already decided."
   set (`.filter(Boolean)` on href) — previously it always showed all
   four with placeholder hrefs, which would have quietly leaked example.com
   links to production.
+
+## Full build-error sweep (post-deploy debugging)
+Real issues found and fixed, beyond the three lint fixes already made:
+- **Next.js version mismatch (the big one):** 4 dynamic route pages
+  (`projects/[slug]`, `blog/[slug]`, admin `projects/[id]`, admin
+  `blog/[id]`) were typed with `params: Promise<{...}>` and `await
+  params` — that's the Next.js **15** convention. This project pins
+  Next **14.2.5**, where `params` is a plain synchronous object. Fixed
+  all 4 to match 14's actual contract. This would have failed Next's
+  own route type-checking during `next build` regardless of any lint
+  settings — worth knowing if any future page gets added by copying an
+  example from Next 15 docs/tutorials, since the two conventions look
+  almost identical and only diverge in this one spot.
+- **`useSearchParams()` without `<Suspense>`:** Next 14 hard-fails the
+  build for any component calling `useSearchParams()` that isn't
+  wrapped in a Suspense boundary. `/admin/login` did this directly.
+  Fixed by splitting into an outer `AdminLoginPage` (renders
+  `<Suspense>`) and an inner `AdminLoginForm` (the actual hook call).
+- Re-verified: every `noUncheckedIndexedAccess` risk pattern
+  (destructuring, bracket indexing) across the whole codebase, every
+  `catch` block's `unknown`-type handling, and every client-hook file
+  actually has `"use client"`. All were already safe except the two
+  already fixed in earlier debugging rounds.

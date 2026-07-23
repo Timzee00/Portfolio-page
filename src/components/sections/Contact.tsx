@@ -51,7 +51,7 @@ export function Contact({ socials }: ContactProps) {
         Contact
       </p>
       <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">
-        Let's build something.
+        Let&apos;s build something.
       </h2>
 
       <form action={formAction} className="mt-10 space-y-5">

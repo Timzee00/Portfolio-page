@@ -74,8 +74,9 @@ export function CommandPalette() {
       e.preventDefault();
       setActiveIndex((i) => Math.max(i - 1, 0));
     }
-    if (e.key === "Enter" && results[activeIndex]) {
-      navigate(results[activeIndex].href);
+    if (e.key === "Enter") {
+      const selected = results[activeIndex];
+      if (selected) navigate(selected.href);
     }
   }
 

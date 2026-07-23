@@ -13,9 +13,9 @@ import { BlogCard } from "@/components/blog/BlogCard";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   const post = await getBlogPostBySlug(slug);
   if (!post) return {};
   return { title: post.title, description: post.excerpt };
@@ -24,9 +24,9 @@ export async function generateMetadata({
 export default async function BlogPostPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
   const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
 

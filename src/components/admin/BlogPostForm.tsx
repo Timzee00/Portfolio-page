@@ -128,7 +128,7 @@ export function BlogPostForm({
           className="w-full rounded-xl border border-muted/30 bg-surface px-4 py-2.5 outline-none focus:border-accent-dev"
         />
         <p className="mt-1 font-mono text-xs text-muted">
-          A future date + status "Published" schedules the post — it stays
+          A future date + status &quot;Published&quot; schedules the post — it stays
           hidden from the public blog until that time passes.
         </p>
       </div>

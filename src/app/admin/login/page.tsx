@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+// useSearchParams() must be wrapped in <Suspense> or Next.js 14 fails
+// the build with "missing-suspense-with-csr-bailout" — split into an
+// inner component so the wrapper below can provide that boundary.
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminLoginForm />
+    </Suspense>
+  );
+}
+
+function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const denied = searchParams.get("denied");
