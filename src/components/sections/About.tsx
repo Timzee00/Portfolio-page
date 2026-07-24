@@ -8,7 +8,7 @@ const TIMELINE = [
   {
     year: "Journey",
     title: "Started building things",
-    body: "Picked up design tools before code — CorelDRAW and Photoshop first, then taught myself to build the interfaces I was designing.",
+    body: "I'm Timzee, a Computer Science student who blends design with development to create clean, thoughtful digital experiences.Curiosity drives everything I build. I enjoy questioning ideas, solving problems, and continuously improving my craft. Every project is a chance to learn, grow, and build something worth using.",
   },
   {
     year: "Education",
@@ -23,7 +23,7 @@ const TIMELINE = [
   {
     year: "Mission",
     title: "Where design and code meet",
-    body: "Most interesting problems live at the seam between how something looks and how it's built. That's the work I keep coming back to.",
+    body: "I don't just write code—I enjoy understanding problems, questioning assumptions, and building solutions people genuinely enjoy using.",
   },
 ];
 
