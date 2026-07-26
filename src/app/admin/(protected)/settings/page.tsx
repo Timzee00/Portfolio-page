@@ -1,5 +1,5 @@
 import { getSiteSettings } from "@/lib/supabase/queries";
-import { updateSiteSettings } from "@/lib/actions/admin/settings";
+import { updateSiteSettings, serializeTimeline } from "@/lib/actions/admin/settings";
 import { MediaUpload } from "@/components/admin/MediaUpload";
 
 export default async function AdminSettingsPage() {
@@ -96,6 +96,57 @@ export default async function AdminSettingsPage() {
             <Field label="Instagram URL" name="social_instagram" defaultValue={settings.social_instagram} />
             <Field label="Contact email" name="social_email" defaultValue={settings.social_email} />
           </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg font-semibold">About section</h2>
+          <div className="mt-4 space-y-5">
+            <div>
+              <label htmlFor="about_heading" className="mb-1.5 block text-sm text-muted">
+                Heading
+              </label>
+              <input
+                id="about_heading"
+                name="about_heading"
+                defaultValue={settings.about_heading}
+                className="w-full rounded-xl border border-muted/30 bg-surface px-4 py-2.5 outline-none focus:border-accent-dev"
+              />
+            </div>
+            <div>
+              <label htmlFor="about_timeline" className="mb-1.5 block text-sm text-muted">
+                Timeline — one item per line, format: Label|Title|Body
+              </label>
+              <textarea
+                id="about_timeline"
+                name="about_timeline"
+                rows={8}
+                defaultValue={serializeTimeline(settings.about_timeline)}
+                className="w-full rounded-xl border border-muted/30 bg-surface px-4 py-2.5 font-mono text-xs outline-none focus:border-accent-dev"
+              />
+              <p className="mt-1 font-mono text-xs text-muted">
+                Add, remove, or reorder lines to change the timeline — any
+                line that doesn&apos;t match the Label|Title|Body format is
+                skipped.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg font-semibold">AI knowledge base</h2>
+          <p className="mt-1 text-sm text-muted">
+            Anything pasted here is given directly to the &quot;Ask AI&quot;
+            widget as background on you — bio details, career history,
+            anything you want it to know that isn&apos;t already covered by
+            your projects and About section.
+          </p>
+          <textarea
+            name="ai_knowledge_base"
+            rows={10}
+            defaultValue={settings.ai_knowledge_base ?? ""}
+            placeholder="e.g. Started coding in 2019, self-taught. Based in Lagos. Previously worked as..."
+            className="mt-4 w-full rounded-xl border border-muted/30 bg-surface px-4 py-2.5 text-sm outline-none focus:border-accent-dev"
+          />
         </section>
 
         <button

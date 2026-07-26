@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/layout/CustomCursor";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { AIChatProvider } from "@/components/ai/AIChatProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -53,9 +54,11 @@ export default function RootLayout({
         <Providers>
           <CustomCursor />
           <CommandPalette />
-          <Navbar />
-          <main id="top">{children}</main>
-          <Footer />
+          <AIChatProvider>
+            <Navbar />
+            <main id="top">{children}</main>
+            <Footer />
+          </AIChatProvider>
         </Providers>
       </body>
     </html>

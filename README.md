@@ -149,3 +149,46 @@ resume PDF, and social/contact links. All backed by a single-row
 `site_settings` table (`0005_site_settings.sql`) — the homepage reads
 it fresh on every request via `getSiteSettings()`, so changes go live
 immediately without a rebuild.
+
+## Ask AI (Groq)
+
+A floating chat widget (bottom-right, every page) answers visitor
+questions about TIMZEE and his projects, backed by Groq. Project pages
+also have an "Ask AI to explain this project" button that opens the
+widget pre-loaded with that project's full detail as context.
+
+Setup: get a free key at console.groq.com, add `GROQ_API_KEY` to your
+`.env.local` and to Netlify's environment variables. Without it, the
+widget still opens but every message returns an error — it fails
+loud, not silently.
+
+## Media display fix
+
+Uploaded thumbnails, galleries, demo videos, and certificate images
+now actually render on the public site (project cards, project detail
+pages, certificates grid) — these were upload-only before this pass.
+
+## What's new in this pass
+
+- **Editable About section** — heading + timeline now live in Supabase
+  (`/admin/settings`), not hardcoded in the component.
+- **AI reads real GitHub content** — when viewing a project with a
+  `github_url`, the "Ask AI" widget's answers are grounded in that
+  repo's actual README and language breakdown, fetched live from
+  GitHub's public API, not just the project's DB summary.
+- **AI knowledge base** — a free-text field in Portfolio Settings fed
+  directly into the AI's system prompt. Paste in anything you want it
+  to know (bio facts, career history, whatever you've gathered from
+  other AI conversations about yourself).
+- **"Read more →"** now visible on project cards on hover, in addition
+  to the whole card already being clickable.
+- **Media display fix** — thumbnails, galleries, videos, and
+  certificate images now actually render publicly (upload always
+  worked; display didn't).
+- **GitHub import fix** — failures (most commonly a slug collision)
+  used to fail completely silently. Now auto-dedupes slugs and shows
+  a real error message per-repo when something still goes wrong.
+
+Run `supabase/migrations/0006_about_and_ai_knowledge.sql` after the
+existing five, in order, before any of the About/AI-knowledge-base
+features will work — it adds the new `site_settings` columns.

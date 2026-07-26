@@ -17,15 +17,25 @@ export async function Certificates() {
             target="_blank"
             rel="noreferrer"
             data-cursor="magnetic"
-            className="group rounded-2xl border border-muted/20 bg-surface p-5 transition-colors hover:border-accent-design/50"
+            className="group overflow-hidden rounded-2xl border border-muted/20 bg-surface transition-colors hover:border-accent-design/50"
           >
-            <p className="font-medium group-hover:text-accent-design">{cert.title}</p>
-            {cert.issuer && <p className="mt-1 font-mono text-xs text-muted">{cert.issuer}</p>}
-            {cert.issued_at && (
-              <p className="mt-3 font-mono text-xs text-muted">
-                {new Date(cert.issued_at).getFullYear()}
-              </p>
+            {cert.image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={cert.image_url} alt="" className="h-32 w-full object-cover" />
+            ) : (
+              <div className="flex h-32 w-full items-center justify-center bg-background font-mono text-xs text-muted">
+                No image
+              </div>
             )}
+            <div className="p-5">
+              <p className="font-medium group-hover:text-accent-design">{cert.title}</p>
+              {cert.issuer && <p className="mt-1 font-mono text-xs text-muted">{cert.issuer}</p>}
+              {cert.issued_at && (
+                <p className="mt-3 font-mono text-xs text-muted">
+                  {new Date(cert.issued_at).getFullYear()}
+                </p>
+              )}
+            </div>
           </a>
         ))}
       </div>

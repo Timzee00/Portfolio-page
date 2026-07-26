@@ -7,23 +7,33 @@ import type { GithubRepo } from "@/lib/github";
 export function GithubImportClient() {
   const [username, setUsername] = useState("");
   const [repos, setRepos] = useState<GithubRepo[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [imported, setImported] = useState<Set<string>>(new Set());
+  const [importErrors, setImportErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setSearchError(null);
     startTransition(async () => {
       const result = await searchGithubRepos(username);
       setRepos(result.repos);
-      setError(result.error ?? null);
+      setSearchError(result.error ?? null);
     });
   }
 
   function handleImport(repo: GithubRepo) {
+    setImportErrors((prev) => {
+      const next = { ...prev };
+      delete next[repo.full_name];
+      return next;
+    });
     startTransition(async () => {
-      await importGithubRepoAsProject(repo);
+      const result = await importGithubRepoAsProject(repo);
+      if (result.error) {
+        setImportErrors((prev) => ({ ...prev, [repo.full_name]: result.error! }));
+        return;
+      }
       setImported((prev) => new Set(prev).add(repo.full_name));
     });
   }
@@ -47,30 +57,36 @@ export function GithubImportClient() {
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-accent-design">{error}</p>}
+      {searchError && <p className="mt-4 text-sm text-accent-design">{searchError}</p>}
 
       <div className="mt-8 space-y-2">
         {repos.map((repo) => {
           const done = imported.has(repo.full_name);
+          const repoError = importErrors[repo.full_name];
           return (
             <div
               key={repo.full_name}
-              className="flex items-center justify-between rounded-xl border border-muted/20 bg-surface px-5 py-3"
+              className="rounded-xl border border-muted/20 bg-surface px-5 py-3"
             >
-              <div>
-                <p className="font-medium">{repo.name}</p>
-                <p className="font-mono text-xs text-muted">
-                  ★ {repo.stargazers_count} · ⑂ {repo.forks_count}
-                  {repo.language ? ` · ${repo.language}` : ""}
-                </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">{repo.name}</p>
+                  <p className="font-mono text-xs text-muted">
+                    ★ {repo.stargazers_count} · ⑂ {repo.forks_count}
+                    {repo.language ? ` · ${repo.language}` : ""}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleImport(repo)}
+                  disabled={done || isPending}
+                  className="rounded-full border border-muted/40 px-4 py-1.5 text-sm hover:border-accent-dev hover:text-accent-dev disabled:opacity-50"
+                >
+                  {done ? "Imported ✓" : "Import as draft"}
+                </button>
               </div>
-              <button
-                onClick={() => handleImport(repo)}
-                disabled={done || isPending}
-                className="rounded-full border border-muted/40 px-4 py-1.5 text-sm hover:border-accent-dev hover:text-accent-dev disabled:opacity-50"
-              >
-                {done ? "Imported ✓" : "Import as draft"}
-              </button>
+              {repoError && (
+                <p className="mt-2 font-mono text-xs text-accent-design">{repoError}</p>
+              )}
             </div>
           );
         })}

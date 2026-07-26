@@ -261,6 +261,30 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
   social_linkedin: null,
   social_instagram: null,
   social_email: null,
+  about_heading: "Developer on one side, designer on the other.",
+  about_timeline: [
+    {
+      label: "Journey",
+      title: "Started building things",
+      body: "Picked up design tools before code — CorelDRAW and Photoshop first, then taught myself to build the interfaces I was designing.",
+    },
+    {
+      label: "Education",
+      title: "Formal + self-taught",
+      body: "Structured learning paired with a lot of late nights shipping small projects to see what actually held up in production.",
+    },
+    {
+      label: "Experience",
+      title: "Client and personal work",
+      body: "Worked across frontend, backend automation, and design — usually on small teams where one person has to cover more than one role.",
+    },
+    {
+      label: "Mission",
+      title: "Where design and code meet",
+      body: "Most interesting problems live at the seam between how something looks and how it's built. That's the work I keep coming back to.",
+    },
+  ],
+  ai_knowledge_base: null,
   updated_at: new Date().toISOString(),
 };
 

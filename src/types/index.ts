@@ -121,6 +121,12 @@ export type ContactMessage = {
 
 export type HeroBackgroundType = "grid" | "image" | "video";
 
+export type AboutTimelineItem = {
+  label: string;
+  title: string;
+  body: string;
+};
+
 export type SiteSettings = {
   id: boolean;
   avatar_url: string | null;
@@ -132,5 +138,8 @@ export type SiteSettings = {
   social_linkedin: string | null;
   social_instagram: string | null;
   social_email: string | null;
+  about_heading: string;
+  about_timeline: AboutTimelineItem[];
+  ai_knowledge_base: string | null;
   updated_at: string;
 };

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProjectBySlug } from "@/lib/supabase/queries";
 import { ProjectReviewsSection } from "@/components/reviews/ProjectReviewsSection";
+import { AskAboutProjectButton } from "@/components/ai/AskAboutProjectButton";
 
 export async function generateMetadata({
   params,
@@ -35,6 +36,15 @@ export default async function ProjectPage({
         {project.title}
       </h1>
       <p className="mt-4 text-lg text-muted">{project.summary}</p>
+
+      {project.thumbnail_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={project.thumbnail_url}
+          alt=""
+          className="mt-8 w-full rounded-2xl object-cover"
+        />
+      )}
 
       <div className="mt-6 flex flex-wrap gap-2">
         {project.tech_stack.map((tech) => (
@@ -70,12 +80,35 @@ export default async function ProjectPage({
             GitHub
           </a>
         )}
+        <AskAboutProjectButton slug={project.slug} title={project.title} />
       </div>
 
       {project.description && (
         <p className="mt-12 whitespace-pre-line leading-relaxed text-muted">
           {project.description}
         </p>
+      )}
+
+      {project.video_url && (
+        <video
+          src={project.video_url}
+          controls
+          className="mt-10 w-full rounded-2xl"
+        />
+      )}
+
+      {project.gallery.length > 0 && (
+        <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3">
+          {project.gallery.map((url) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={url}
+              src={url}
+              alt=""
+              className="aspect-square w-full rounded-xl object-cover"
+            />
+          ))}
+        </div>
       )}
 
       {project.features.length > 0 && (

@@ -24,6 +24,8 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close the mobile menu on route change / hash-link tap, and stop
+  // background scroll while it's open.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -48,7 +50,7 @@ export function Navbar() {
         <ul className="hidden gap-8 md:flex">
           {LINKS.map((link) => (
             <li key={link.href}>
-              
+              <a
                 href={link.href}
                 data-cursor="magnetic"
                 className="text-sm text-muted transition-colors hover:text-foreground"
@@ -111,7 +113,7 @@ export function Navbar() {
             <ul className="flex flex-col gap-1 px-6 py-4">
               {LINKS.map((link) => (
                 <li key={link.href}>
-                  
+                  <a
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
                     className="block rounded-lg px-2 py-3 text-base text-muted transition-colors hover:bg-background hover:text-foreground"
