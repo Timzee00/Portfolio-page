@@ -1,5 +1,6 @@
 import { getSiteSettings } from "@/lib/supabase/queries";
-import { updateSiteSettings, serializeTimeline } from "@/lib/actions/admin/settings";
+import { updateSiteSettings } from "@/lib/actions/admin/settings";
+import { serializeTimeline } from "@/lib/actions/admin/timeline";
 import { MediaUpload } from "@/components/admin/MediaUpload";
 
 export default async function AdminSettingsPage() {
