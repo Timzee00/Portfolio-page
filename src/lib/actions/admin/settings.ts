@@ -29,10 +29,6 @@ function parseTimeline(raw: string): AboutTimelineItem[] {
     .filter((item): item is AboutTimelineItem => item !== null);
 }
 
-export function serializeTimeline(items: AboutTimelineItem[]): string {
-  return items.map((i) => `${i.label}|${i.title}|${i.body}`).join("\n");
-}
-
 export async function updateSiteSettings(formData: FormData) {
   const supabase = await createClient();
 
