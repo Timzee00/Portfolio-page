@@ -57,6 +57,11 @@ export type BlogComment = {
   created_at: string;
 };
 
+export type BlogCommentAdmin = BlogComment & {
+  post_title?: string;
+  post_slug?: string;
+};
+
 export type Skill = {
   id: string;
   name: string;
