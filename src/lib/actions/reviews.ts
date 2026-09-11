@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { getPortfolioReviewsPage, type PortfolioReviewSort } from "@/lib/supabase/queries";
+import { allowPublicAction, honeypotTriggered } from "@/lib/abuse";
 
 const ReviewSchema = z.object({
   author_name: z.string().trim().min(1, "Name is required").max(120),
@@ -28,6 +29,8 @@ export async function submitPortfolioReview(
   _prev: ReviewFormState,
   formData: FormData
 ): Promise<ReviewFormState> {
+  if (honeypotTriggered(formData)) return { status: "success", message: "Thanks for the review!" };
+
   const parsed = ReviewSchema.safeParse({
     author_name: formData.get("author_name"),
     rating: formData.get("rating"),
@@ -37,11 +40,15 @@ export async function submitPortfolioReview(
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
+  const allowed = await allowPublicAction("portfolio-review", 3, 3600, userData.user?.id);
+  if (!allowed) return { status: "error", message: "Too many review attempts. Please try again later." };
+
   const { error } = await supabase.from("portfolio_reviews").insert({
     author_name: parsed.data.author_name,
     rating: parsed.data.rating,
     comment: parsed.data.comment || null,
     user_id: userData.user?.id ?? null,
+    approved: false,
   });
 
   if (error) {
@@ -50,7 +57,7 @@ export async function submitPortfolioReview(
   }
 
   revalidatePath("/");
-  return { status: "success", message: "Thanks for the review!" };
+  return { status: "success", message: "Thanks! Your review is awaiting approval." };
 }
 
 export async function submitProjectReview(
@@ -58,6 +65,8 @@ export async function submitProjectReview(
   _prev: ReviewFormState,
   formData: FormData
 ): Promise<ReviewFormState> {
+  if (honeypotTriggered(formData)) return { status: "success", message: "Thanks for the review!" };
+
   const parsed = ReviewSchema.safeParse({
     author_name: formData.get("author_name"),
     rating: formData.get("rating"),
@@ -67,12 +76,16 @@ export async function submitProjectReview(
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
+  const allowed = await allowPublicAction("project-review", 3, 3600, userData.user?.id);
+  if (!allowed) return { status: "error", message: "Too many review attempts. Please try again later." };
+
   const { error } = await supabase.from("project_reviews").insert({
     project_id: projectId,
     author_name: parsed.data.author_name,
     rating: parsed.data.rating,
     comment: parsed.data.comment || null,
     user_id: userData.user?.id ?? null,
+    approved: false,
   });
 
   if (error) {
@@ -81,11 +94,13 @@ export async function submitProjectReview(
   }
 
   revalidatePath("/projects");
-  return { status: "success", message: "Thanks for the review!" };
+  return { status: "success", message: "Thanks! Your review is awaiting approval." };
 }
 
 export async function markPortfolioReviewHelpful(reviewId: string) {
   const supabase = await createClient();
+  const allowed = await allowPublicAction("portfolio-helpful", 20, 3600);
+  if (!allowed) return;
   const { error } = await supabase.rpc("increment_portfolio_review_helpful", { review_id: reviewId });
   if (error) console.error("markPortfolioReviewHelpful:", error.message);
   revalidatePath("/");
@@ -93,6 +108,8 @@ export async function markPortfolioReviewHelpful(reviewId: string) {
 
 export async function markProjectReviewHelpful(reviewId: string) {
   const supabase = await createClient();
+  const allowed = await allowPublicAction("project-helpful", 20, 3600);
+  if (!allowed) return;
   const { error } = await supabase.rpc("increment_project_review_helpful", { review_id: reviewId });
   if (error) console.error("markProjectReviewHelpful:", error.message);
   revalidatePath("/projects");
