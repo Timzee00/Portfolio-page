@@ -228,8 +228,16 @@ export async function getAllReviewsAdmin(): Promise<{
 }> {
   const supabase = await createClient();
   const [portfolioRes, projectRes] = await Promise.all([
-    supabase.from("portfolio_reviews").select("*").order("created_at", { ascending: false }),
-    supabase.from("project_reviews").select("*, projects(title)").order("created_at", { ascending: false }),
+    supabase
+      .from("portfolio_reviews")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100),
+    supabase
+      .from("project_reviews")
+      .select("*, projects(title)")
+      .order("created_at", { ascending: false })
+      .limit(100),
   ]);
   if (portfolioRes.error) console.error("getAllReviewsAdmin (portfolio):", portfolioRes.error.message);
   if (projectRes.error) console.error("getAllReviewsAdmin (project):", projectRes.error.message);
