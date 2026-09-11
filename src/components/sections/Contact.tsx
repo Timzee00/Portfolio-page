@@ -50,13 +50,11 @@ export function Contact({ socials }: ContactProps) {
             <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted">07 / Open channel</p>
             <h2 className="mt-4 max-w-xl font-display text-4xl font-bold leading-[0.92] tracking-tight sm:text-5xl lg:text-7xl">Have an idea that should exist?</h2>
             <p className="mt-6 max-w-md text-sm leading-6 text-muted sm:text-base">Bring the rough idea. I’ll help turn it into something clear, useful, and ready for people to use.</p>
-
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-accent-dev/20 bg-accent-dev/5 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-accent-dev">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent-dev" /> Available for projects
               </span>
             </div>
-
             <div className="mt-8 flex gap-3">
               {socialLinks.map(({ icon: Icon, label, href }) => (
                 <a
@@ -78,26 +76,30 @@ export function Contact({ socials }: ContactProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="name" className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Name</label>
-                <input id="name" name="name" required placeholder="Your name" className="min-h-12 w-full rounded-2xl border border-muted/20 bg-background/40 px-4 text-sm outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
+                <input id="name" name="name" required maxLength={120} autoComplete="name" placeholder="Your name" className="min-h-12 w-full rounded-2xl border border-muted/20 bg-background/40 px-4 text-sm outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
               </div>
               <div>
                 <label htmlFor="email" className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Email</label>
-                <input id="email" name="email" type="email" required placeholder="you@example.com" className="min-h-12 w-full rounded-2xl border border-muted/20 bg-background/40 px-4 text-sm outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
+                <input id="email" name="email" type="email" required autoComplete="email" placeholder="you@example.com" className="min-h-12 w-full rounded-2xl border border-muted/20 bg-background/40 px-4 text-sm outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
               </div>
             </div>
 
             <div>
               <label htmlFor="subject" className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Subject</label>
-              <input id="subject" name="subject" placeholder="What are we building?" className="min-h-12 w-full rounded-2xl border border-muted/20 bg-background/40 px-4 text-sm outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
+              <input id="subject" name="subject" maxLength={200} placeholder="What are we building?" className="min-h-12 w-full rounded-2xl border border-muted/20 bg-background/40 px-4 text-sm outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
             </div>
 
             <div>
               <label htmlFor="message" className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Message</label>
-              <textarea id="message" name="message" required rows={7} placeholder="Tell me the idea, problem, or project…" className="w-full resize-y rounded-2xl border border-muted/20 bg-background/40 px-4 py-3 text-sm leading-6 outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
+              <textarea id="message" name="message" required maxLength={5000} rows={7} placeholder="Tell me the idea, problem, or project…" className="w-full resize-y rounded-2xl border border-muted/20 bg-background/40 px-4 py-3 text-sm leading-6 outline-none transition-colors placeholder:text-muted/35 focus:border-accent-dev" />
+            </div>
+
+            <div className="sr-only" aria-hidden="true">
+              <label htmlFor="contact-website">Website</label>
+              <input id="contact-website" name="_website" tabIndex={-1} autoComplete="off" />
             </div>
 
             <SubmitButton />
-
             {state.status !== "idle" && (
               <p role="status" className={`text-sm ${state.status === "success" ? "text-accent-dev" : "text-accent-design"}`}>
                 {state.message}
