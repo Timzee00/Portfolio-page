@@ -15,11 +15,17 @@ type ReviewLike = {
 export function ReviewsList({
   reviews,
   total,
+  average,
   onMarkHelpful,
+  onLoadMore,
+  loading,
 }: {
   reviews: ReviewLike[];
   total: number;
+  average: number;
   onMarkHelpful: (id: string) => void;
+  onLoadMore: () => void;
+  loading: boolean;
 }) {
   const [sort, setSort] = useState<"newest" | "highest" | "helpful">("newest");
 
@@ -41,20 +47,18 @@ export function ReviewsList({
     );
   }
 
-  const average = (reviews.reduce((sum, r) => sum + r.rating, 0) / Math.max(reviews.length, 1)).toFixed(1);
-
   return (
     <div>
       <div className="mb-6 rounded-3xl border border-muted/20 bg-surface p-5 sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-muted/20 bg-background font-display text-xl font-bold">
-              {average}
+              {average.toFixed(1)}
             </div>
             <div>
-              <StarRating value={Math.round(Number(average))} readOnly />
+              <StarRating value={Math.round(average)} readOnly />
               <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-muted">
-                Based on {total.toLocaleString()} review{total === 1 ? "" : "s"}
+                Average across all {total.toLocaleString()} review{total === 1 ? "" : "s"}
               </p>
             </div>
           </div>
@@ -105,10 +109,21 @@ export function ReviewsList({
         ))}
       </div>
 
-      {total > reviews.length && (
-        <p className="mt-5 text-center font-mono text-[10px] uppercase tracking-wider text-muted">
-          Showing {reviews.length} of {total.toLocaleString()} · More reviews are loaded separately to keep the page fast.
-        </p>
+      {reviews.length < total && (
+        <div className="mt-7 flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={onLoadMore}
+            disabled={loading}
+            data-cursor="magnetic"
+            className="rounded-full border border-muted/25 bg-surface px-6 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all hover:border-accent-dev/50 hover:text-accent-dev disabled:cursor-wait disabled:opacity-50"
+          >
+            {loading ? "Loading…" : "Load more reviews"}
+          </button>
+          <p className="text-center font-mono text-[10px] uppercase tracking-wider text-muted">
+            Showing {reviews.length.toLocaleString()} of {total.toLocaleString()}
+          </p>
+        </div>
       )}
     </div>
   );
