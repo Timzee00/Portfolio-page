@@ -8,7 +8,7 @@ export async function Testimonials() {
     <section id="testimonials" className="relative mx-auto max-w-7xl overflow-hidden px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted">06 / Social proof</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted">07 / Social proof</p>
           <h2 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl lg:text-6xl">People remember the work.</h2>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted/60">{testimonials.length} voice{testimonials.length === 1 ? "" : "s"}</span>
