@@ -9,7 +9,7 @@ export async function Certificates() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted">04 / Proof of work</p>
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted">06 / Proof of work</p>
             <h2 className="mt-3 max-w-xl font-display text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Credentials that back the work.
             </h2>
