@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { ReviewsList } from "@/components/reviews/ReviewsList";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
 import type { PortfolioReview } from "@/types";
+import type { PortfolioReviewSort } from "@/lib/supabase/queries";
 import type { ReviewFormState } from "@/lib/actions/reviews";
-
-const PAGE_SIZE = 6;
 
 type ReviewPage = {
   reviews: PortfolioReview[];
@@ -27,12 +26,13 @@ export function PortfolioReviewsList({
   average: number;
   onMarkHelpful: (id: string) => Promise<void>;
   submitReview: (prev: ReviewFormState, formData: FormData) => Promise<ReviewFormState>;
-  loadReviews: (page: number) => Promise<ReviewPage>;
+  loadReviews: (page: number, sort: PortfolioReviewSort) => Promise<ReviewPage>;
 }) {
   const [reviews, setReviews] = useState(initialReviews);
   const [total, setTotal] = useState(initialTotal);
   const [average, setAverage] = useState(initialAverage);
   const [page, setPage] = useState(0);
+  const [sort, setSort] = useState<PortfolioReviewSort>("newest");
   const [loading, setLoading] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
 
@@ -50,12 +50,27 @@ export function PortfolioReviewsList({
     };
   }, [reviewOpen]);
 
+  async function handleSortChange(nextSort: PortfolioReviewSort) {
+    if (nextSort === sort || loading) return;
+    setLoading(true);
+    try {
+      const result = await loadReviews(0, nextSort);
+      setReviews(result.reviews);
+      setTotal(result.total);
+      setAverage(result.average);
+      setPage(0);
+      setSort(nextSort);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleLoadMore() {
     if (loading || reviews.length >= total) return;
     setLoading(true);
     try {
       const nextPage = page + 1;
-      const result = await loadReviews(nextPage);
+      const result = await loadReviews(nextPage, sort);
       setReviews((current) => [...current, ...result.reviews]);
       setTotal(result.total);
       setAverage(result.average);
@@ -72,7 +87,9 @@ export function PortfolioReviewsList({
           reviews={reviews}
           total={total}
           average={average}
+          sort={sort}
           loading={loading}
+          onSortChange={(nextSort) => void handleSortChange(nextSort)}
           onLoadMore={() => void handleLoadMore()}
           onMarkHelpful={(id) => void onMarkHelpful(id)}
         />
