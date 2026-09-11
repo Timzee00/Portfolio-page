@@ -47,7 +47,7 @@ export function Contact({ socials }: ContactProps) {
 
         <div className="relative grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted">07 / Open channel</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted">09 / Open channel</p>
             <h2 className="mt-4 max-w-xl font-display text-4xl font-bold leading-[0.92] tracking-tight sm:text-5xl lg:text-7xl">Have an idea that should exist?</h2>
             <p className="mt-6 max-w-md text-sm leading-6 text-muted sm:text-base">Bring the rough idea. I’ll help turn it into something clear, useful, and ready for people to use.</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
