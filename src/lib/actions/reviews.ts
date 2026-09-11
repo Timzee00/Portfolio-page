@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getPortfolioReviewsPage } from "@/lib/supabase/queries";
 
 const ReviewSchema = z.object({
   author_name: z.string().trim().min(1, "Name is required").max(120),
@@ -14,6 +15,11 @@ export type ReviewFormState = {
   status: "idle" | "success" | "error";
   message?: string;
 };
+
+export async function loadPortfolioReviewsPage(page: number) {
+  const safePage = Number.isInteger(page) ? Math.max(0, page) : 0;
+  return getPortfolioReviewsPage(safePage, 6);
+}
 
 export async function submitPortfolioReview(
   _prev: ReviewFormState,
