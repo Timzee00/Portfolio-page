@@ -4,6 +4,7 @@ import { About } from "@/components/sections/About";
 import { Skills } from "@/components/sections/Skills";
 import { Achievements } from "@/components/sections/Achievements";
 import { Projects } from "@/components/sections/Projects";
+import { BlogPreview } from "@/components/sections/BlogPreview";
 import { Certificates } from "@/components/sections/Certificates";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { PortfolioReviews } from "@/components/sections/PortfolioReviews";
@@ -27,6 +28,7 @@ export default async function HomePage() {
       <Achievements />
       <Skills />
       <Projects />
+      <BlogPreview />
       <Certificates />
       <Testimonials />
       <PortfolioReviews />
