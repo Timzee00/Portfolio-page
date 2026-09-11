@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { StarRating } from "./StarRating";
 
 type ReviewLike = {
@@ -12,10 +11,14 @@ type ReviewLike = {
   created_at: string;
 };
 
+type ReviewSort = "newest" | "highest" | "helpful";
+
 export function ReviewsList({
   reviews,
   total,
   average,
+  sort,
+  onSortChange,
   onMarkHelpful,
   onLoadMore,
   loading,
@@ -23,20 +26,12 @@ export function ReviewsList({
   reviews: ReviewLike[];
   total: number;
   average: number;
+  sort: ReviewSort;
+  onSortChange: (sort: ReviewSort) => void;
   onMarkHelpful: (id: string) => void;
   onLoadMore: () => void;
   loading: boolean;
 }) {
-  const [sort, setSort] = useState<"newest" | "highest" | "helpful">("newest");
-
-  const sorted = useMemo(() => {
-    const copy = [...reviews];
-    if (sort === "newest") copy.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-    if (sort === "highest") copy.sort((a, b) => b.rating - a.rating);
-    if (sort === "helpful") copy.sort((a, b) => b.helpful_count - a.helpful_count);
-    return copy;
-  }, [reviews, sort]);
-
   if (total === 0) {
     return (
       <div className="rounded-3xl border border-dashed border-muted/25 bg-surface/50 p-8 sm:p-10">
@@ -64,14 +59,15 @@ export function ReviewsList({
           </div>
 
           <div className="flex gap-4 overflow-x-auto pb-1 font-mono text-[11px] uppercase tracking-wider">
-            {(["newest", "highest", "helpful"] as const).map((s) => (
+            {(["newest", "highest", "helpful"] as const).map((option) => (
               <button
-                key={s}
-                onClick={() => setSort(s)}
+                key={option}
+                type="button"
+                onClick={() => onSortChange(option)}
                 data-cursor="magnetic"
-                className={`shrink-0 transition-colors ${sort === s ? "text-accent-dev" : "text-muted hover:text-foreground"}`}
+                className={`shrink-0 transition-colors ${sort === option ? "text-accent-dev" : "text-muted hover:text-foreground"}`}
               >
-                {s}
+                {option}
               </button>
             ))}
           </div>
@@ -79,7 +75,7 @@ export function ReviewsList({
       </div>
 
       <div className="space-y-3">
-        {sorted.map((review, index) => (
+        {reviews.map((review, index) => (
           <article
             key={review.id}
             className="group relative overflow-hidden rounded-2xl border border-muted/15 bg-surface p-5 transition-transform duration-300 hover:-translate-y-0.5 hover:border-muted/30 sm:p-6"
