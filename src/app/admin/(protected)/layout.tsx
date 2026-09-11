@@ -11,6 +11,7 @@ const NAV = [
   { href: "/admin/testimonials", label: "Testimonials" },
   { href: "/admin/certificates", label: "Certificates" },
   { href: "/admin/reviews", label: "Reviews" },
+  { href: "/admin/comments", label: "Blog comments" },
   { href: "/admin/messages", label: "Messages" },
   { href: "/admin/github", label: "GitHub import" },
   { href: "/admin/settings", label: "Settings" },
@@ -21,11 +22,6 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Login page has its own layout-free route outside this guard —
-  // see app/admin/login/page.tsx, which isn't wrapped by this file's
-  // parent segment logic since Next.js layouts apply to nested routes
-  // but requireAdmin() itself redirects to /admin/login, so this is
-  // safe to call unconditionally here.
   await requireAdmin();
 
   return (
