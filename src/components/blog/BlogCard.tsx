@@ -10,38 +10,61 @@ export function BlogCard({ post }: { post: BlogPost }) {
     <Link
       href={`/blog/${post.slug}`}
       data-cursor="magnetic"
-      className="group block rounded-2xl border border-muted/20 bg-surface p-6 transition-colors hover:border-accent-design/50"
+      className="group block overflow-hidden rounded-[1.6rem] border border-muted/15 bg-surface/70 transition-all duration-500 hover:-translate-y-1 hover:border-accent-design/40 hover:shadow-2xl"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        {post.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full bg-background px-2.5 py-1 font-mono text-xs text-muted"
-          >
-            #{tag}
-          </span>
-        ))}
+      <div className="relative aspect-[16/9] overflow-hidden bg-background">
+        {post.cover_image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.cover_image_url}
+            alt={post.title}
+            loading="lazy"
+            className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+          />
+        ) : (
+          <div className="relative flex h-full items-end overflow-hidden bg-background p-5">
+            <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full border border-accent-design/15" />
+            <div className="absolute bottom-6 right-8 h-16 w-16 rounded-full border border-accent-dev/15" />
+            <span className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-muted">TIMZEE / JOURNAL</span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/75 via-transparent to-transparent" />
+        <div className="absolute left-4 top-4 flex max-w-[calc(100%-5rem)] flex-wrap gap-2">
+          {post.tags.slice(0, 2).map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-white/15 bg-background/70 px-2.5 py-1 font-mono text-[10px] text-foreground backdrop-blur-md"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+        <span className="absolute bottom-4 right-4 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full border border-white/15 bg-background/70 text-lg opacity-0 backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          ↗
+        </span>
       </div>
 
-      <h3 className="mt-4 font-display text-xl font-semibold group-hover:text-accent-design">
-        {post.title}
-      </h3>
-      <p className="mt-2 text-sm text-muted">{post.excerpt}</p>
+      <div className="p-5 sm:p-6">
+        <h3 className="font-display text-xl font-semibold leading-tight tracking-tight transition-colors group-hover:text-accent-design sm:text-2xl">
+          {post.title}
+        </h3>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted">{post.excerpt}</p>
 
-      <div className="mt-5 flex items-center gap-3 font-mono text-xs text-muted">
-        {post.published_at && (
-          <time dateTime={post.published_at}>
-            {new Date(post.published_at).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </time>
-        )}
-        <span aria-hidden>·</span>
-        <span>{minutes} min read</span>
-        <span aria-hidden>·</span>
-        <span>{post.views} views</span>
+        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-muted/10 pt-4 font-mono text-[10px] uppercase tracking-wider text-muted">
+          {post.published_at && (
+            <time dateTime={post.published_at}>
+              {new Date(post.published_at).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+          )}
+          <span aria-hidden>·</span>
+          <span>{minutes} min read</span>
+          <span aria-hidden>·</span>
+          <span>{post.views.toLocaleString()} views</span>
+        </div>
       </div>
     </Link>
   );
