@@ -9,7 +9,7 @@ export async function PortfolioReviews() {
     <section id="reviews" className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32">
       <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted">06 / Reviews</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted">08 / Reviews</p>
           <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
             People who stopped by.
           </h2>
