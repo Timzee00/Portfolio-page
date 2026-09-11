@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type {
   Achievement,
   BlogComment,
+  BlogCommentAdmin,
   BlogPost,
   Certificate,
   ContactMessage,
@@ -95,7 +96,7 @@ export async function getBlogCommentsPage(
 
   const { data, error, count } = await supabase
     .from("blog_comments")
-    .select("*", { count: "exact" })
+    .select("*")
     .eq("post_id", postId)
     .eq("approved", true)
     .order("created_at", { ascending: false })
@@ -105,15 +106,14 @@ export async function getBlogCommentsPage(
     console.error("getBlogCommentsPage:", error.message);
     return { comments: [], total: 0 };
   }
-
   return { comments: data ?? [], total: count ?? 0 };
 }
 
-export async function getAllBlogCommentsAdmin(limit = 50): Promise<BlogComment[]> {
+export async function getAllBlogCommentsAdmin(limit = 50): Promise<BlogCommentAdmin[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("blog_comments")
-    .select("*, blog_posts(title)")
+    .select("*, blog_posts(title, slug)")
     .order("created_at", { ascending: false })
     .limit(Math.min(100, Math.max(1, limit)));
 
@@ -122,7 +122,17 @@ export async function getAllBlogCommentsAdmin(limit = 50): Promise<BlogComment[]
     return [];
   }
 
-  return (data ?? []) as BlogComment[];
+  return (data ?? []).map((comment: any) => ({
+    id: comment.id,
+    post_id: comment.post_id,
+    user_id: comment.user_id,
+    author_name: comment.author_name,
+    comment: comment.comment,
+    approved: comment.approved,
+    created_at: comment.created_at,
+    post_title: comment.blog_posts?.title,
+    post_slug: comment.blog_posts?.slug,
+  }));
 }
 
 export type PortfolioReviewSort = "newest" | "highest" | "helpful";
