@@ -81,11 +81,18 @@ export async function getCertificates(): Promise<Certificate[]> {
   return data ?? [];
 }
 
+export type PortfolioReviewSort = "newest" | "highest" | "helpful";
+
 /**
- * Public reviews are paginated. Only one small page is sent to the browser
- * at a time, while totals and the aggregate rating come from the stats row.
+ * Public reviews are paginated and sorted in the database. Totals and the
+ * aggregate rating come from the stats row, so the page never scans millions
+ * of reviews just to display a count or average.
  */
-export async function getPortfolioReviewsPage(page = 0, pageSize = 6): Promise<{
+export async function getPortfolioReviewsPage(
+  page = 0,
+  pageSize = 6,
+  sort: PortfolioReviewSort = "newest"
+): Promise<{
   reviews: PortfolioReview[];
   total: number;
   average: number;
@@ -96,18 +103,22 @@ export async function getPortfolioReviewsPage(page = 0, pageSize = 6): Promise<{
   const from = safePage * safePageSize;
   const to = from + safePageSize - 1;
 
+  let reviewsQuery = supabase
+    .from("portfolio_reviews")
+    .select("*")
+    .eq("approved", true);
+
+  if (sort === "highest") {
+    reviewsQuery = reviewsQuery.order("rating", { ascending: false }).order("created_at", { ascending: false });
+  } else if (sort === "helpful") {
+    reviewsQuery = reviewsQuery.order("helpful_count", { ascending: false }).order("created_at", { ascending: false });
+  } else {
+    reviewsQuery = reviewsQuery.order("created_at", { ascending: false });
+  }
+
   const [reviewsRes, statsRes] = await Promise.all([
-    supabase
-      .from("portfolio_reviews")
-      .select("*")
-      .eq("approved", true)
-      .order("created_at", { ascending: false })
-      .range(from, to),
-    supabase
-      .from("portfolio_review_stats")
-      .select("total_reviews, rating_sum")
-      .eq("id", 1)
-      .maybeSingle(),
+    reviewsQuery.range(from, to),
+    supabase.from("portfolio_review_stats").select("total_reviews, rating_sum").eq("id", 1).maybeSingle(),
   ]);
 
   if (reviewsRes.error) {
