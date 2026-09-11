@@ -2,10 +2,11 @@ type GroqMessage = { role: "system" | "user" | "assistant"; content: string };
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// llama-3.3-70b-versatile is a solid general default on Groq — fast
-// and capable enough for Q&A/summarization. Swap the model string here
-// if Groq deprecates it or you want something cheaper/faster later.
-const MODEL = "llama-3.3-70b-versatile";
+// Use an active production model. The previous llama-3.3-70b-versatile
+// model is no longer the right choice for this deployment. Llama 3.1 8B
+// Instant is an active Groq production model and is well suited to the
+// short portfolio Q&A this endpoint performs.
+const MODEL = "llama-3.1-8b-instant";
 
 export async function askGroq(messages: GroqMessage[]): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
