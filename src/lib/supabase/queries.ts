@@ -99,7 +99,7 @@ export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
     .from("blog_posts")
     .select("*")
     .eq("status", "published")
-    .lte("published_at", new Date().toISOString()) // hide future-scheduled posts
+    .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false });
 
   if (error) {
@@ -126,8 +126,6 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
   return data;
 }
 
-/** Fire-and-forget-safe: swallow errors so a view-count failure never
- *  breaks the page render. */
 export async function incrementBlogPostViews(slug: string): Promise<void> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("increment_blog_post_views", {
@@ -150,19 +148,31 @@ export async function getCertificates(): Promise<Certificate[]> {
   return data ?? [];
 }
 
-export async function getPortfolioReviews(): Promise<PortfolioReview[]> {
+/**
+ * Public reviews are deliberately paginated. Never send an unbounded review
+ * table to the browser: the portfolio should remain fast even with millions
+ * of approved reviews.
+ */
+export async function getPortfolioReviewsPage(page = 0, pageSize = 6): Promise<{
+  reviews: PortfolioReview[];
+  total: number;
+}> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const from = Math.max(0, page) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await supabase
     .from("portfolio_reviews")
-    .select("*")
+    .select("*", { count: "exact" })
     .eq("approved", true)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   if (error) {
-    console.error("getPortfolioReviews:", error.message);
-    return [];
+    console.error("getPortfolioReviewsPage:", error.message);
+    return { reviews: [], total: 0 };
   }
-  return data ?? [];
+  return { reviews: data ?? [], total: count ?? 0 };
 }
 
 export async function getProjectReviews(projectId: string): Promise<ProjectReview[]> {
@@ -180,9 +190,6 @@ export async function getProjectReviews(projectId: string): Promise<ProjectRevie
   }
   return data ?? [];
 }
-
-// ── Admin-only reads (RLS allows these only when the signed-in user
-// is in the admins table — see supabase/migrations/0001_init.sql) ──
 
 export async function getAllMessages(): Promise<ContactMessage[]> {
   const supabase = await createClient();
@@ -263,33 +270,15 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
   social_email: null,
   about_heading: "Developer on one side, designer on the other.",
   about_timeline: [
-    {
-      label: "Journey",
-      title: "Started building things",
-      body: "Picked up design tools before code — CorelDRAW and Photoshop first, then taught myself to build the interfaces I was designing.",
-    },
-    {
-      label: "Education",
-      title: "Formal + self-taught",
-      body: "Structured learning paired with a lot of late nights shipping small projects to see what actually held up in production.",
-    },
-    {
-      label: "Experience",
-      title: "Client and personal work",
-      body: "Worked across frontend, backend automation, and design — usually on small teams where one person has to cover more than one role.",
-    },
-    {
-      label: "Mission",
-      title: "Where design and code meet",
-      body: "Most interesting problems live at the seam between how something looks and how it's built. That's the work I keep coming back to.",
-    },
+    { label: "Journey", title: "Started building things", body: "Picked up design tools before code — CorelDRAW and Photoshop first, then taught myself to build the interfaces I was designing." },
+    { label: "Education", title: "Formal + self-taught", body: "Structured learning paired with a lot of late nights shipping small projects to see what actually held up in production." },
+    { label: "Experience", title: "Client and personal work", body: "Worked across frontend, backend automation, and design — usually on small teams where one person has to cover more than one role." },
+    { label: "Mission", title: "Where design and code meet", body: "Most interesting problems live at the seam between how something looks and how it's built. That's the work I keep coming back to." },
   ],
   ai_knowledge_base: null,
   updated_at: new Date().toISOString(),
 };
 
-/** Falls back to sensible defaults if the settings row is missing —
- *  e.g. before supabase/migrations/0005_site_settings.sql has run. */
 export async function getSiteSettings(): Promise<SiteSettings> {
   const supabase = await createClient();
   const { data, error } = await supabase
