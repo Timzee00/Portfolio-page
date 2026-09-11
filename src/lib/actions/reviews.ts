@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { getPortfolioReviewsPage } from "@/lib/supabase/queries";
+import { getPortfolioReviewsPage, type PortfolioReviewSort } from "@/lib/supabase/queries";
 
 const ReviewSchema = z.object({
   author_name: z.string().trim().min(1, "Name is required").max(120),
@@ -11,14 +11,17 @@ const ReviewSchema = z.object({
   comment: z.string().trim().max(2000).optional(),
 });
 
+const ReviewSortSchema = z.enum(["newest", "highest", "helpful"]);
+
 export type ReviewFormState = {
   status: "idle" | "success" | "error";
   message?: string;
 };
 
-export async function loadPortfolioReviewsPage(page: number) {
+export async function loadPortfolioReviewsPage(page: number, sort: PortfolioReviewSort = "newest") {
   const safePage = Number.isInteger(page) ? Math.max(0, page) : 0;
-  return getPortfolioReviewsPage(safePage, 6);
+  const safeSort = ReviewSortSchema.safeParse(sort).success ? sort : "newest";
+  return getPortfolioReviewsPage(safePage, 6, safeSort);
 }
 
 export async function submitPortfolioReview(
@@ -30,13 +33,10 @@ export async function submitPortfolioReview(
     rating: formData.get("rating"),
     comment: formData.get("comment"),
   });
-  if (!parsed.success) {
-    return { status: "error", message: parsed.error.issues[0]?.message };
-  }
+  if (!parsed.success) return { status: "error", message: parsed.error.issues[0]?.message };
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-
   const { error } = await supabase.from("portfolio_reviews").insert({
     author_name: parsed.data.author_name,
     rating: parsed.data.rating,
@@ -63,13 +63,10 @@ export async function submitProjectReview(
     rating: formData.get("rating"),
     comment: formData.get("comment"),
   });
-  if (!parsed.success) {
-    return { status: "error", message: parsed.error.issues[0]?.message };
-  }
+  if (!parsed.success) return { status: "error", message: parsed.error.issues[0]?.message };
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-
   const { error } = await supabase.from("project_reviews").insert({
     project_id: projectId,
     author_name: parsed.data.author_name,
@@ -89,18 +86,14 @@ export async function submitProjectReview(
 
 export async function markPortfolioReviewHelpful(reviewId: string) {
   const supabase = await createClient();
-  const { error } = await supabase.rpc("increment_portfolio_review_helpful", {
-    review_id: reviewId,
-  });
+  const { error } = await supabase.rpc("increment_portfolio_review_helpful", { review_id: reviewId });
   if (error) console.error("markPortfolioReviewHelpful:", error.message);
   revalidatePath("/");
 }
 
 export async function markProjectReviewHelpful(reviewId: string) {
   const supabase = await createClient();
-  const { error } = await supabase.rpc("increment_project_review_helpful", {
-    review_id: reviewId,
-  });
+  const { error } = await supabase.rpc("increment_project_review_helpful", { review_id: reviewId });
   if (error) console.error("markProjectReviewHelpful:", error.message);
   revalidatePath("/projects");
 }
