@@ -1,9 +1,9 @@
 import { getPortfolioReviewsPage } from "@/lib/supabase/queries";
-import { submitPortfolioReview, markPortfolioReviewHelpful } from "@/lib/actions/reviews";
+import { submitPortfolioReview, markPortfolioReviewHelpful, loadPortfolioReviewsPage } from "@/lib/actions/reviews";
 import { PortfolioReviewsList } from "./PortfolioReviewsList";
 
 export async function PortfolioReviews() {
-  const { reviews, total } = await getPortfolioReviewsPage(0, 6);
+  const { reviews, total, average } = await getPortfolioReviewsPage(0, 6);
 
   return (
     <section id="reviews" className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32">
@@ -25,8 +25,10 @@ export async function PortfolioReviews() {
       <PortfolioReviewsList
         reviews={reviews}
         total={total}
+        average={average}
         onMarkHelpful={markPortfolioReviewHelpful}
         submitReview={submitPortfolioReview}
+        loadReviews={loadPortfolioReviewsPage}
       />
     </section>
   );
