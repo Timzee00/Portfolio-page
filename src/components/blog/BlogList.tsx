@@ -29,37 +29,36 @@ export function BlogList({ posts }: { posts: BlogPost[] }) {
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
+  const isDefaultView = !activeTag && !query.trim();
 
   return (
     <div>
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-4 border-y border-muted/10 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
           <button
+            type="button"
             data-cursor="magnetic"
             onClick={() => {
               setActiveTag(null);
               setVisibleCount(PAGE_SIZE);
             }}
-            className={`rounded-full px-4 py-2 text-sm transition-colors ${
-              !activeTag
-                ? "bg-accent-design text-background"
-                : "text-muted hover:text-foreground"
+            className={`shrink-0 rounded-full px-4 py-2 text-sm transition-colors ${
+              !activeTag ? "bg-accent-design text-background" : "text-muted hover:text-foreground"
             }`}
           >
             All
           </button>
           {allTags.map((tag) => (
             <button
+              type="button"
               key={tag}
               data-cursor="magnetic"
               onClick={() => {
                 setActiveTag(tag);
                 setVisibleCount(PAGE_SIZE);
               }}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${
-                activeTag === tag
-                  ? "bg-accent-design text-background"
-                  : "text-muted hover:text-foreground"
+              className={`shrink-0 rounded-full px-4 py-2 text-sm transition-colors ${
+                activeTag === tag ? "bg-accent-design text-background" : "text-muted hover:text-foreground"
               }`}
             >
               #{tag}
@@ -75,30 +74,33 @@ export function BlogList({ posts }: { posts: BlogPost[] }) {
           }}
           placeholder="Search posts…"
           aria-label="Search posts"
-          className="w-full rounded-full border border-muted/30 bg-surface px-4 py-2 text-sm outline-none focus:border-accent-dev md:w-64"
+          className="w-full rounded-full border border-muted/25 bg-surface px-4 py-2.5 text-sm outline-none placeholder:text-muted/40 focus:border-accent-dev lg:w-72"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-16 font-mono text-sm text-muted">
+        <p className="mt-16 rounded-2xl border border-dashed border-muted/20 bg-surface/40 p-8 font-mono text-sm text-muted">
           No posts match that search.
         </p>
       ) : (
         <>
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
-            {visible.map((post) => (
-              <BlogCard key={post.id} post={post} />
+          <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {visible.map((post, index) => (
+              <div key={post.id} className={isDefaultView && index === 0 ? "lg:col-span-2" : ""}>
+                <BlogCard post={post} featured={isDefaultView && index === 0} />
+              </div>
             ))}
           </div>
 
           {hasMore && (
             <div className="mt-10 flex justify-center">
               <button
+                type="button"
                 data-cursor="magnetic"
                 onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                className="rounded-full border border-muted/40 px-6 py-2.5 text-sm font-medium hover:border-accent-dev hover:text-accent-dev"
+                className="rounded-full border border-muted/30 px-6 py-2.5 text-sm font-medium transition-colors hover:border-accent-dev hover:text-accent-dev"
               >
-                Load more
+                Load more notes
               </button>
             </div>
           )}
