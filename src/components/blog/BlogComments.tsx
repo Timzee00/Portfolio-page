@@ -8,6 +8,11 @@ import type { BlogCommentFormState } from "@/lib/actions/blog-comments";
 
 const initialState: BlogCommentFormState = { status: "idle" };
 
+type CommentPage = {
+  comments: BlogComment[];
+  total: number;
+};
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -21,11 +26,6 @@ function SubmitButton() {
     </button>
   );
 }
-
-type CommentPage = {
-  comments: BlogComment[];
-  total: number;
-};
 
 export function BlogComments({
   postId,
@@ -132,7 +132,10 @@ export function BlogComments({
           )}
         </div>
 
-        <form action={formAction} className="h-fit rounded-3xl border border-muted/20 bg-surface p-5 sm:p-6 lg:sticky lg:top-28">
+        <form
+          action={formAction}
+          className="h-fit rounded-3xl border border-muted/20 bg-surface p-5 sm:p-6 lg:sticky lg:top-28"
+        >
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted">Add yours</p>
           <h3 className="mt-2 font-display text-2xl font-semibold">What do you think?</h3>
 
@@ -167,9 +170,14 @@ export function BlogComments({
               />
             </div>
 
-            <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
-              <label htmlFor={`blog-${postId}-website">Website</label>
-              <input id={`blog-${postId}-website`} name="_website" tabIndex={-1} autoComplete="off" />
+            <div className="sr-only" aria-hidden="true">
+              <label htmlFor={`blog-${postId}-website`}>Website</label>
+              <input
+                id={`blog-${postId}-website`}
+                name="_website"
+                tabIndex={-1}
+                autoComplete="off"
+              />
             </div>
 
             <SubmitButton />
