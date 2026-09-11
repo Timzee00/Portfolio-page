@@ -51,7 +51,7 @@ export function BlogCard({
       </div>
 
       <div className={`p-5 sm:p-6 ${featured ? "md:flex md:flex-col md:justify-center md:p-8" : ""}`}>
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">Latest note</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">{featured ? "Latest note" : "Journal"}</p>
         <h3 className={`mt-2 font-display font-semibold leading-tight tracking-tight transition-colors group-hover:text-accent-design ${featured ? "text-2xl sm:text-3xl lg:text-4xl" : "text-xl sm:text-2xl"}`}>
           {post.title}
         </h3>
