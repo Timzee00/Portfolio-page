@@ -14,7 +14,7 @@ function SubmitButton() {
       type="submit"
       disabled={pending}
       data-cursor="magnetic"
-      className="rounded-full bg-accent-design px-6 py-2.5 text-sm font-medium text-background disabled:opacity-50"
+      className="rounded-full bg-accent-design px-6 py-2.5 text-sm font-medium text-background disabled:cursor-wait disabled:opacity-50"
     >
       {pending ? "Submitting…" : "Submit review"}
     </button>
@@ -44,6 +44,8 @@ export function ReviewForm({
           id="author_name"
           name="author_name"
           required
+          maxLength={120}
+          autoComplete="name"
           className="w-full rounded-xl border border-muted/30 bg-background px-4 py-2.5 outline-none focus:border-accent-dev"
         />
       </div>
@@ -54,13 +56,21 @@ export function ReviewForm({
         <textarea
           id="comment"
           name="comment"
+          maxLength={2000}
           rows={3}
           className="w-full rounded-xl border border-muted/30 bg-background px-4 py-2.5 outline-none focus:border-accent-dev"
         />
       </div>
+      <div className="sr-only" aria-hidden="true">
+        <label htmlFor="review-website">Website</label>
+        <input id="review-website" name="_website" tabIndex={-1} autoComplete="off" />
+      </div>
       <SubmitButton />
       {state.status !== "idle" && (
-        <p className={`text-sm ${state.status === "success" ? "text-accent-dev" : "text-accent-design"}`}>
+        <p
+          role="status"
+          className={`text-sm ${state.status === "success" ? "text-accent-dev" : "text-accent-design"}`}
+        >
           {state.message}
         </p>
       )}
