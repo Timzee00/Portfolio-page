@@ -2,11 +2,9 @@ type GroqMessage = { role: "system" | "user" | "assistant"; content: string };
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Use an active production model. The previous llama-3.3-70b-versatile
-// model is no longer the right choice for this deployment. Llama 3.1 8B
-// Instant is an active Groq production model and is well suited to the
-// short portfolio Q&A this endpoint performs.
-const MODEL = "llama-3.1-8b-instant";
+// Keep the portfolio assistant on a currently supported Groq production model.
+// GPT-OSS 20B is the recommended replacement for the retired Llama 3.1 8B Instant.
+const MODEL = "openai/gpt-oss-20b";
 
 export async function askGroq(messages: GroqMessage[]): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
