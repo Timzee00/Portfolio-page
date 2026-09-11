@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { allowPublicAction, honeypotTriggered } from "@/lib/abuse";
 
 const ContactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
@@ -19,6 +20,8 @@ export async function submitContactMessage(
   _prevState: ContactState,
   formData: FormData
 ): Promise<ContactState> {
+  if (honeypotTriggered(formData)) return { status: "success", message: "Thanks — I'll get back to you soon." };
+
   const parsed = ContactSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -31,6 +34,11 @@ export async function submitContactMessage(
       status: "error",
       message: parsed.error.issues[0]?.message ?? "Please check your input.",
     };
+  }
+
+  const allowed = await allowPublicAction("contact", 3, 900);
+  if (!allowed) {
+    return { status: "error", message: "Too many messages were sent recently. Please try again later." };
   }
 
   const supabase = await createClient();
