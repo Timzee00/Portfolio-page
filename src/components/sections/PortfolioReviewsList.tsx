@@ -6,17 +6,34 @@ import { ReviewForm } from "@/components/reviews/ReviewForm";
 import type { PortfolioReview } from "@/types";
 import type { ReviewFormState } from "@/lib/actions/reviews";
 
+const PAGE_SIZE = 6;
+
+type ReviewPage = {
+  reviews: PortfolioReview[];
+  total: number;
+  average: number;
+};
+
 export function PortfolioReviewsList({
-  reviews,
-  total,
+  reviews: initialReviews,
+  total: initialTotal,
+  average: initialAverage,
   onMarkHelpful,
   submitReview,
+  loadReviews,
 }: {
   reviews: PortfolioReview[];
   total: number;
+  average: number;
   onMarkHelpful: (id: string) => Promise<void>;
   submitReview: (prev: ReviewFormState, formData: FormData) => Promise<ReviewFormState>;
+  loadReviews: (page: number) => Promise<ReviewPage>;
 }) {
+  const [reviews, setReviews] = useState(initialReviews);
+  const [total, setTotal] = useState(initialTotal);
+  const [average, setAverage] = useState(initialAverage);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
 
   useEffect(() => {
@@ -33,12 +50,30 @@ export function PortfolioReviewsList({
     };
   }, [reviewOpen]);
 
+  async function handleLoadMore() {
+    if (loading || reviews.length >= total) return;
+    setLoading(true);
+    try {
+      const nextPage = page + 1;
+      const result = await loadReviews(nextPage);
+      setReviews((current) => [...current, ...result.reviews]);
+      setTotal(result.total);
+      setAverage(result.average);
+      setPage(nextPage);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
         <ReviewsList
           reviews={reviews}
           total={total}
+          average={average}
+          loading={loading}
+          onLoadMore={() => void handleLoadMore()}
           onMarkHelpful={(id) => void onMarkHelpful(id)}
         />
 
