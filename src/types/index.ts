@@ -1,4 +1,4 @@
-// Hand-written types matching supabase/migrations/0001_init.sql.
+// Hand-written types matching the Supabase schema.
 // Once the project is linked, regenerate the source of truth with:
 //   npx supabase gen types typescript --project-id YOUR_PROJECT_REF > src/types/supabase.ts
 
@@ -45,6 +45,16 @@ export type BlogPost = {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type BlogComment = {
+  id: string;
+  post_id: string;
+  user_id: string | null;
+  author_name: string;
+  comment: string;
+  approved: boolean;
+  created_at: string;
 };
 
 export type Skill = {
