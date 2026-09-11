@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type {
   Achievement,
+  BlogComment,
   BlogPost,
   Certificate,
   ContactMessage,
@@ -79,6 +80,49 @@ export async function getCertificates(): Promise<Certificate[]> {
   const { data, error } = await supabase.from("certificates").select("*").order("sort_order", { ascending: true });
   if (error) { console.error("getCertificates:", error.message); return []; }
   return data ?? [];
+}
+
+export async function getBlogCommentsPage(
+  postId: string,
+  page = 0,
+  pageSize = 10
+): Promise<{ comments: BlogComment[]; total: number }> {
+  const supabase = await createClient();
+  const safePage = Math.max(0, Math.floor(page));
+  const safePageSize = Math.min(20, Math.max(1, Math.floor(pageSize)));
+  const from = safePage * safePageSize;
+  const to = from + safePageSize - 1;
+
+  const { data, error, count } = await supabase
+    .from("blog_comments")
+    .select("*", { count: "exact" })
+    .eq("post_id", postId)
+    .eq("approved", true)
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    console.error("getBlogCommentsPage:", error.message);
+    return { comments: [], total: 0 };
+  }
+
+  return { comments: data ?? [], total: count ?? 0 };
+}
+
+export async function getAllBlogCommentsAdmin(limit = 50): Promise<BlogComment[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("blog_comments")
+    .select("*, blog_posts(title)")
+    .order("created_at", { ascending: false })
+    .limit(Math.min(100, Math.max(1, limit)));
+
+  if (error) {
+    console.error("getAllBlogCommentsAdmin:", error.message);
+    return [];
+  }
+
+  return (data ?? []) as BlogComment[];
 }
 
 export type PortfolioReviewSort = "newest" | "highest" | "helpful";
