@@ -4,6 +4,7 @@
 
 export type ProjectStatus = "draft" | "published" | "archived";
 export type BlogStatus = "draft" | "published";
+export type BlogMediaType = "image" | "video";
 
 export type Project = {
   id: string;
@@ -37,6 +38,13 @@ export type BlogPost = {
   excerpt: string;
   content_markdown: string;
   cover_image_url: string | null;
+  before_after: boolean;
+  before_media_type: BlogMediaType | null;
+  before_media_url: string | null;
+  before_project_url: string | null;
+  after_media_type: BlogMediaType | null;
+  after_media_url: string | null;
+  after_project_url: string | null;
   tags: string[];
   status: BlogStatus;
   reading_time_minutes: number | null;
@@ -62,99 +70,13 @@ export type BlogCommentAdmin = BlogComment & {
   post_slug?: string;
 };
 
-export type Skill = {
-  id: string;
-  name: string;
-  category: string;
-  description: string | null;
-  years_experience: number | null;
-  related_project_slugs: string[];
-  sort_order: number;
-};
-
-export type Achievement = {
-  id: string;
-  label: string;
-  value: number;
-  suffix: string;
-  sort_order: number;
-};
-
-export type Testimonial = {
-  id: string;
-  author_name: string;
-  author_role: string | null;
-  author_company: string | null;
-  quote: string;
-  avatar_url: string | null;
-  pinned: boolean;
-  sort_order: number;
-};
-
-export type Certificate = {
-  id: string;
-  title: string;
-  issuer: string | null;
-  image_url: string | null;
-  file_url: string | null;
-  issued_at: string | null;
-  sort_order: number;
-};
-
-export type PortfolioReview = {
-  id: string;
-  user_id: string | null;
-  author_name: string;
-  rating: number;
-  comment: string | null;
-  helpful_count: number;
-  approved: boolean;
-  created_at: string;
-};
-
-export type ProjectReview = {
-  id: string;
-  project_id: string;
-  user_id: string | null;
-  author_name: string;
-  rating: number;
-  comment: string | null;
-  helpful_count: number;
-  approved: boolean;
-  created_at: string;
-};
-
-export type ContactMessage = {
-  id: string;
-  name: string;
-  email: string;
-  subject: string | null;
-  message: string;
-  read: boolean;
-  created_at: string;
-};
-
+export type Skill = { id: string; name: string; category: string; description: string | null; years_experience: number | null; related_project_slugs: string[]; sort_order: number; };
+export type Achievement = { id: string; label: string; value: number; suffix: string; sort_order: number; };
+export type Testimonial = { id: string; author_name: string; author_role: string | null; author_company: string | null; quote: string; avatar_url: string | null; pinned: boolean; sort_order: number; };
+export type Certificate = { id: string; title: string; issuer: string | null; image_url: string | null; file_url: string | null; issued_at: string | null; sort_order: number; };
+export type PortfolioReview = { id: string; user_id: string | null; author_name: string; rating: number; comment: string | null; helpful_count: number; approved: boolean; created_at: string; };
+export type ProjectReview = { id: string; project_id: string; user_id: string | null; author_name: string; rating: number; comment: string | null; helpful_count: number; approved: boolean; created_at: string; };
+export type ContactMessage = { id: string; name: string; email: string; subject: string | null; message: string; read: boolean; created_at: string; };
 export type HeroBackgroundType = "grid" | "image" | "video";
-
-export type AboutTimelineItem = {
-  label: string;
-  title: string;
-  body: string;
-};
-
-export type SiteSettings = {
-  id: boolean;
-  avatar_url: string | null;
-  resume_url: string | null;
-  hero_background_type: HeroBackgroundType;
-  hero_background_url: string | null;
-  typing_roles: string[];
-  social_github: string | null;
-  social_linkedin: string | null;
-  social_instagram: string | null;
-  social_email: string | null;
-  about_heading: string;
-  about_timeline: AboutTimelineItem[];
-  ai_knowledge_base: string | null;
-  updated_at: string;
-};
+export type AboutTimelineItem = { label: string; title: string; body: string; };
+export type SiteSettings = { id: boolean; avatar_url: string | null; resume_url: string | null; hero_background_type: HeroBackgroundType; hero_background_url: string | null; typing_roles: string[]; social_github: string | null; social_linkedin: string | null; social_instagram: string | null; social_email: string | null; about_heading: string; about_timeline: AboutTimelineItem[]; ai_knowledge_base: string | null; updated_at: string; };
