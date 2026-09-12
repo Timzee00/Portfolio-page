@@ -18,21 +18,27 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // Admin has its own navigation. Never render the public site's hamburger here.
-  if (pathname?.startsWith("/admin")) return null;
+  const isAdmin = pathname?.startsWith("/admin") ?? false;
 
   useEffect(() => {
+    if (isAdmin) return;
     const onScroll = () => setScrolled(window.scrollY > 32);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
+    if (isAdmin) {
+      setMenuOpen(false);
+      return;
+    }
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [menuOpen]);
+  }, [menuOpen, isAdmin]);
+
+  // The admin dashboard has its own dedicated sidebar/drawer.
+  if (isAdmin) return null;
 
   return (
     <header className={cn("fixed inset-x-0 top-0 z-50 px-3 transition-all duration-500 sm:px-5", scrolled ? "pt-3" : "pt-4 sm:pt-5")}>
