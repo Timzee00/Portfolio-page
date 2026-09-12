@@ -15,22 +15,24 @@ type ReviewSort = "newest" | "highest" | "helpful";
 
 export function ReviewsList({
   reviews,
-  total,
-  average,
-  sort,
+  total = reviews.length,
+  average = reviews.length
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0,
+  sort = "newest",
   onSortChange,
   onMarkHelpful,
   onLoadMore,
-  loading,
+  loading = false,
 }: {
   reviews: ReviewLike[];
-  total: number;
-  average: number;
-  sort: ReviewSort;
-  onSortChange: (sort: ReviewSort) => void;
+  total?: number;
+  average?: number;
+  sort?: ReviewSort;
+  onSortChange?: (sort: ReviewSort) => void;
   onMarkHelpful: (id: string) => void;
-  onLoadMore: () => void;
-  loading: boolean;
+  onLoadMore?: () => void;
+  loading?: boolean;
 }) {
   if (total === 0) {
     return (
@@ -58,19 +60,21 @@ export function ReviewsList({
             </div>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-1 font-mono text-[11px] uppercase tracking-wider">
-            {(["newest", "highest", "helpful"] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => onSortChange(option)}
-                data-cursor="magnetic"
-                className={`shrink-0 transition-colors ${sort === option ? "text-accent-dev" : "text-muted hover:text-foreground"}`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+          {onSortChange && (
+            <div className="flex gap-4 overflow-x-auto pb-1 font-mono text-[11px] uppercase tracking-wider">
+              {(["newest", "highest", "helpful"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => onSortChange(option)}
+                  data-cursor="magnetic"
+                  className={`shrink-0 transition-colors ${sort === option ? "text-accent-dev" : "text-muted hover:text-foreground"}`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -105,7 +109,7 @@ export function ReviewsList({
         ))}
       </div>
 
-      {reviews.length < total && (
+      {onLoadMore && reviews.length < total && (
         <div className="mt-7 flex flex-col items-center gap-2">
           <button
             type="button"
