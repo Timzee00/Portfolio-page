@@ -12,6 +12,8 @@ type HeroProps = { roles?: string[]; avatarUrl?: string | null; resumeUrl?: stri
 export function Hero({ roles = DEFAULT_ROLES, avatarUrl, resumeUrl, backgroundType = "grid", backgroundUrl }: HeroProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const useCustomBackground = backgroundType !== "grid" && !!backgroundUrl;
+  const mediaUrl = (url: string) => `/api/media?url=${encodeURIComponent(url)}`;
+
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -39,7 +41,7 @@ export function Hero({ roles = DEFAULT_ROLES, avatarUrl, resumeUrl, backgroundTy
     <section className="relative isolate flex min-h-[min(920px,100vh)] items-center overflow-hidden px-5 py-24 sm:px-8 lg:px-12">
       {useCustomBackground && backgroundUrl ? (
         <div className="absolute inset-0 -z-20" aria-hidden>
-          {backgroundType === "video" ? <video src={backgroundUrl} className="h-full w-full object-cover opacity-30" autoPlay loop muted playsInline /> : <img src={backgroundUrl} alt="" className="h-full w-full object-cover opacity-30" />}
+          {backgroundType === "video" ? <video src={mediaUrl(backgroundUrl)} className="h-full w-full object-cover opacity-30" autoPlay loop muted playsInline /> : <img src={mediaUrl(backgroundUrl)} alt="" className="h-full w-full object-cover opacity-30" />}
           <div className="absolute inset-0 bg-background/80" />
         </div>
       ) : (
@@ -71,7 +73,7 @@ export function Hero({ roles = DEFAULT_ROLES, avatarUrl, resumeUrl, backgroundTy
               <div className="bg-background p-5"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">Next</p><a href="#about" className="mt-8 block font-display text-xl font-semibold transition-colors hover:text-accent-dev">See the story →</a></div>
             </div>
           </div>
-          {avatarUrl && <div className="absolute -bottom-6 -left-5 hidden h-20 w-20 overflow-hidden rounded-2xl border-4 border-background shadow-xl sm:block"><img src={avatarUrl} alt="" className="h-full w-full object-cover" /></div>}
+          {avatarUrl && <div className="absolute -bottom-6 -left-5 hidden h-20 w-20 overflow-hidden rounded-2xl border-4 border-background shadow-xl sm:block"><img src={mediaUrl(avatarUrl)} alt="" className="h-full w-full object-cover" /></div>}
         </motion.div>
       </div>
 
